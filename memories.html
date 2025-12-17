@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Our Memories ❤️</title>
+  <style>
+    body { font-family: system-ui, Arial; margin:0; background:#fff; color:#111; }
+    header { padding:26px 18px; background:linear-gradient(90deg,#ffe6f2,#fff); border-bottom:1px solid #eee; }
+    .wrap { width:min(980px, 92vw); margin:0 auto; }
+    h1 { margin:0 0 6px; font-size:30px; }
+    p { margin:0; color:#333; }
+    .btnrow { display:flex; gap:10px; margin-top:14px; flex-wrap:wrap; }
+    button { padding:10px 12px; border-radius:12px; border:1px solid #ddd; background:#fff; cursor:pointer; }
+    main { padding:22px 0 40px; }
+    .grid { display:grid; gap:14px; grid-template-columns: repeat(12, 1fr); }
+    .card { grid-column: span 12; border:1px solid #eee; border-radius:18px; padding:16px; box-shadow: 0 8px 18px rgba(0,0,0,.05); }
+    .two { grid-column: span 12; }
+    @media (min-width: 860px) { .two { grid-column: span 6; } }
+    .gallery { display:grid; grid-template-columns: repeat(2, 1fr); gap:10px; }
+    @media (min-width: 700px) { .gallery { grid-template-columns: repeat(3, 1fr); } }
+    .ph { aspect-ratio: 1/1; border-radius:14px; border:1px dashed #ccc; display:grid; place-items:center; color:#666; background:#fafafa; }
+    .note { background:#fff7fb; border:1px solid #ffd3e6; }
+    .title { font-weight:700; margin-bottom:8px; }
+    ul { margin:10px 0 0 18px; color:#333; }
+    a { color:#ff3b8a; }
+  </style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <h1>Happy Birthday, my love ❤️</h1>
+    <p>This is our little corner of the internet — just for us.</p>
+    <div class="btnrow">
+      <button id="logout">Lock website</button>
+      <button id="scrollGallery">Go to Gallery</button>
+      <button id="scrollLetters">Go to Notes</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="grid">
+    <section class="card two">
+      <div class="title">💌 A short message</div>
+      <p>
+        Add your message here. Example: <br/>
+        “Thank you for being my safe place. I’m proud of us, and I can’t wait for many more birthdays together.”
+      </p>
+    </section>
+
+    <section class="card two note" id="letters">
+      <div class="title">🗒️ Our favourite moments (edit these)</div>
+      <ul>
+        <li>Our first date: ____</li>
+        <li>Funniest memory: ____</li>
+        <li>Best trip/day together: ____</li>
+        <li>What I love about you: ____</li>
+      </ul>
+    </section>
+
+    <section class="card" id="gallery">
+      <div class="title">📸 Photo Gallery (replace placeholders with your photos)</div>
+      <p style="margin-bottom:12px;">Put photos in the same folder and replace the boxes with &lt;img&gt; tags.</p>
+
+      <div class="gallery">
+        <!-- Replace these placeholders with images like:
+             <img src="photo1.jpg" style="width:100%; border-radius:14px; border:1px solid #eee;" />
+        -->
+        <div class="ph">Photo 1</div>
+        <div class="ph">Photo 2</div>
+        <div class="ph">Photo 3</div>
+        <div class="ph">Photo 4</div>
+        <div class="ph">Photo 5</div>
+        <div class="ph">Photo 6</div>
+      </div>
+    </section>
+
+    <section class="card two">
+      <div class="title">🎵 Playlist</div>
+      <p>Add a Spotify/YouTube link here: <a href="#">Your playlist link</a></p>
+    </section>
+
+    <section class="card two">
+      <div class="title">🗓️ Countdown recap</div>
+      <p>After his birthday, you can convert this site into a “Year together” tracker or “Next trip” countdown.</p>
+    </section>
+  </div>
+</main>
+
+<script>
+  // Simple lock check
+  if (localStorage.getItem("unlocked") !== "yes") {
+    window.location.href = "index.html";
+  }
+
+  document.getElementById("logout").addEventListener("click", () => {
+    localStorage.removeItem("unlocked");
+    window.location.href = "index.html";
+  });
+
+  document.getElementById("scrollGallery").addEventListener("click", () => {
+    document.getElementById("gallery").scrollIntoView({behavior:"smooth"});
+  });
+  document.getElementById("scrollLetters").addEventListener("click", () => {
+    document.getElementById("letters").scrollIntoView({behavior:"smooth"});
+  });
+</script>
+</body>
+</html>
