@@ -3,108 +3,427 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Our Memories ❤️</title>
+  <title>Happy Birthday ❤️</title>
+
   <style>
-    body { font-family: system-ui, Arial; margin:0; background:#fff; color:#111; }
-    header { padding:26px 18px; background:linear-gradient(90deg,#ffe6f2,#fff); border-bottom:1px solid #eee; }
-    .wrap { width:min(980px, 92vw); margin:0 auto; }
-    h1 { margin:0 0 6px; font-size:30px; }
-    p { margin:0; color:#333; }
-    .btnrow { display:flex; gap:10px; margin-top:14px; flex-wrap:wrap; }
-    button { padding:10px 12px; border-radius:12px; border:1px solid #ddd; background:#fff; cursor:pointer; }
-    main { padding:22px 0 40px; }
-    .grid { display:grid; gap:14px; grid-template-columns: repeat(12, 1fr); }
-    .card { grid-column: span 12; border:1px solid #eee; border-radius:18px; padding:16px; box-shadow: 0 8px 18px rgba(0,0,0,.05); }
-    .two { grid-column: span 12; }
-    @media (min-width: 860px) { .two { grid-column: span 6; } }
-    .gallery { display:grid; grid-template-columns: repeat(2, 1fr); gap:10px; }
-    @media (min-width: 700px) { .gallery { grid-template-columns: repeat(3, 1fr); } }
-    .ph { aspect-ratio: 1/1; border-radius:14px; border:1px dashed #ccc; display:grid; place-items:center; color:#666; background:#fafafa; }
-    .note { background:#fff7fb; border:1px solid #ffd3e6; }
-    .title { font-weight:700; margin-bottom:8px; }
-    ul { margin:10px 0 0 18px; color:#333; }
-    a { color:#ff3b8a; }
+    :root{
+      --pink:#ff3b8a;
+      --soft:#fff0f7;
+      --card:#ffffffee;
+      --text:#121212;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background: radial-gradient(circle at top, #ffe6f2 0%, #ffffff 55%, #fff 100%);
+      color:var(--text);
+      overflow-x:hidden;
+    }
+
+    header{
+      padding:26px 18px;
+      background: linear-gradient(90deg,#ffe6f2,#fff);
+      border-bottom:1px solid #eee;
+      position: sticky;
+      top:0;
+      z-index: 5;
+      backdrop-filter: blur(6px);
+    }
+    .wrap{ width:min(1000px, 92vw); margin:0 auto; }
+    h1{ margin:0 0 6px; font-size:30px; }
+    p{ margin:0; color:#333; line-height:1.45; }
+
+    .btnrow{ display:flex; gap:10px; margin-top:14px; flex-wrap:wrap; }
+    button{
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid #ddd;
+      background:#fff;
+      cursor:pointer;
+      font-weight:600;
+    }
+    button:hover{ filter:brightness(.98); }
+
+    main{ padding:22px 0 60px; }
+    .grid{ display:grid; gap:14px; grid-template-columns: repeat(12, 1fr); }
+    .card{
+      grid-column: span 12;
+      background: var(--card);
+      border:1px solid #eee;
+      border-radius:18px;
+      padding:16px;
+      box-shadow: 0 10px 22px rgba(0,0,0,.06);
+    }
+    .two{ grid-column: span 12; }
+    @media (min-width: 860px){ .two{ grid-column: span 6; } }
+
+    .title{ font-weight:800; margin-bottom:10px; }
+
+    /* Gallery */
+    .gallery{ display:grid; grid-template-columns: repeat(2, 1fr); gap:10px; }
+    @media (min-width: 720px){ .gallery{ grid-template-columns: repeat(3, 1fr); } }
+    .gallery img{
+      width:100%;
+      border-radius:14px;
+      border:1px solid #eee;
+      display:block;
+      aspect-ratio: 1/1;
+      object-fit: cover;
+    }
+    .ph{
+      aspect-ratio: 1/1;
+      border-radius:14px;
+      border:1px dashed #ccc;
+      display:grid;
+      place-items:center;
+      color:#666;
+      background:#fafafa;
+      font-weight:600;
+    }
+
+    /* Greeting modal */
+    .modalOverlay{
+      position:fixed; inset:0;
+      display:grid; place-items:center;
+      background: rgba(0,0,0,.45);
+      z-index: 20;
+      padding: 18px;
+    }
+    .modal{
+      width:min(720px, 96vw);
+      background: #fff;
+      border-radius: 22px;
+      border: 1px solid #eee;
+      overflow:hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,.25);
+      transform: translateY(8px);
+      animation: popIn .35s ease-out forwards;
+    }
+    @keyframes popIn{
+      from{ opacity:0; transform: translateY(18px) scale(.98); }
+      to{ opacity:1; transform: translateY(0) scale(1); }
+    }
+
+    .modalTop{
+      padding:18px 18px 14px;
+      background: linear-gradient(90deg, #ffe6f2, #ffffff);
+      border-bottom:1px solid #f1f1f1;
+    }
+    .modalTop h2{ margin:0 0 6px; font-size:24px; }
+    .modalBody{ padding:18px; }
+    .loveNote{
+      background: var(--soft);
+      border: 1px solid #ffd3e6;
+      border-radius: 18px;
+      padding: 16px;
+      line-height:1.55;
+      font-size: 16px;
+    }
+    .modalBtns{
+      display:flex; gap:10px;
+      padding: 14px 18px 18px;
+      justify-content:flex-end;
+    }
+    .primary{
+      background: var(--pink);
+      color:#fff;
+      border:0;
+      padding: 10px 14px;
+    }
+
+    /* Confetti canvas */
+    #confettiCanvas{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index: 10;
+    }
+
+    /* Balloons */
+    .balloon{
+      position: fixed;
+      bottom: -140px;
+      width: 70px;
+      height: 95px;
+      border-radius: 50% 50% 48% 48%;
+      box-shadow: inset -10px -12px 18px rgba(0,0,0,.08);
+      z-index: 9;
+      opacity: .95;
+      animation: floatUp linear forwards;
+    }
+    .balloon::after{
+      content:"";
+      position:absolute;
+      bottom:-26px;
+      left:50%;
+      width:2px;
+      height:38px;
+      background: rgba(0,0,0,.15);
+      transform: translateX(-50%);
+    }
+    @keyframes floatUp{
+      from{ transform: translateY(0) translateX(0) rotate(0deg); }
+      to{ transform: translateY(-115vh) translateX(var(--drift)) rotate(var(--spin)); }
+    }
+
+    /* Little popper burst */
+    .popper{
+      position: fixed;
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      pointer-events:none;
+      z-index: 11;
+      animation: popMove .85s ease-out forwards;
+    }
+    @keyframes popMove{
+      from{ transform: translate(0,0) scale(1); opacity:1; }
+      to{ transform: translate(var(--x), var(--y)) scale(.4); opacity:0; }
+    }
   </style>
 </head>
+
 <body>
-<header>
-  <div class="wrap">
-    <h1>Happy Birthday, my love ❤️</h1>
-    <p>This is our little corner of the internet — just for us.</p>
-    <div class="btnrow">
-      <button id="logout">Lock website</button>
-      <button id="scrollGallery">Go to Gallery</button>
-      <button id="scrollLetters">Go to Notes</button>
+  <canvas id="confettiCanvas"></canvas>
+
+  <header>
+    <div class="wrap">
+      <h1>Happy Birthday, my love ❤️</h1>
+      <p>Welcome to our little memory space — made only for you.</p>
+
+      <div class="btnrow">
+        <button id="logout">Lock website</button>
+        <button id="scrollGallery">Go to Gallery</button>
+        <button id="scrollMemories">Go to Memories</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="grid">
+      <section class="card two">
+        <div class="title">💌 Quick message</div>
+        <p>
+          (You can edit this line too) <br/>
+          I’m grateful for you — for your love, your patience, and the way you make my world feel safe and bright.
+        </p>
+      </section>
+
+      <section class="card two" id="memories">
+        <div class="title">🗓️ Our memories</div>
+        <ul style="margin:0 0 0 18px; color:#333; line-height:1.65;">
+          <li>Our first date: ____</li>
+          <li>Our funniest moment: ____</li>
+          <li>Our best day together: ____</li>
+          <li>What I adore about you: ____</li>
+        </ul>
+      </section>
+
+      <section class="card" id="gallery">
+        <div class="title">📸 Photo Gallery</div>
+        <p style="margin-top:0; margin-bottom:12px;">
+          Add your photos to the same repo folder and replace the placeholders below with <b>&lt;img&gt;</b> tags.
+        </p>
+
+        <div class="gallery">
+          <!-- Replace placeholders with images like:
+               <img src="photo1.jpg" alt="Memory 1">
+               <img src="photos/photo2.jpg" alt="Memory 2">
+          -->
+          <div class="ph">Photo 1</div>
+          <div class="ph">Photo 2</div>
+          <div class="ph">Photo 3</div>
+          <div class="ph">Photo 4</div>
+          <div class="ph">Photo 5</div>
+          <div class="ph">Photo 6</div>
+        </div>
+      </section>
+
+      <section class="card two">
+        <div class="title">🎵 Playlist</div>
+        <p>Paste your Spotify/YouTube link here: <a href="#" style="color:var(--pink);">Your playlist link</a></p>
+      </section>
+
+      <section class="card two">
+        <div class="title">🌙 One last note</div>
+        <p>Even on ordinary days, you feel like home to me. ❤️</p>
+      </section>
+    </div>
+  </main>
+
+  <!-- Greeting Card Modal -->
+  <div class="modalOverlay" id="greetingModal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="Birthday Greeting Card">
+      <div class="modalTop">
+        <h2>🎂 Happy Birthday, Babe! ❤️</h2>
+        <p style="margin:0; color:#444;">Open this card first… then the memories.</p>
+      </div>
+
+      <div class="modalBody">
+        <div class="loveNote" id="loveNote">
+          <!-- ✅ Edit this note to your words -->
+          Today is all about you.  
+          Thank you for choosing me, loving me, and making life feel lighter.  
+          I’m proud of us, and I can’t wait for everything that’s still ahead.  
+          <br/><br/>
+          I love you — endlessly. ❤️
+          <br/><br/>
+          — From me to you
+        </div>
+      </div>
+
+      <div class="modalBtns">
+        <button id="closeCard" class="primary">Open the Surprise 🎉</button>
+      </div>
     </div>
   </div>
-</header>
-
-<main class="wrap">
-  <div class="grid">
-    <section class="card two">
-      <div class="title">💌 A short message</div>
-      <p>
-        Add your message here. Example: <br/>
-        “Thank you for being my safe place. I’m proud of us, and I can’t wait for many more birthdays together.”
-      </p>
-    </section>
-
-    <section class="card two note" id="letters">
-      <div class="title">🗒️ Our favourite moments (edit these)</div>
-      <ul>
-        <li>Our first date: ____</li>
-        <li>Funniest memory: ____</li>
-        <li>Best trip/day together: ____</li>
-        <li>What I love about you: ____</li>
-      </ul>
-    </section>
-
-    <section class="card" id="gallery">
-      <div class="title">📸 Photo Gallery (replace placeholders with your photos)</div>
-      <p style="margin-bottom:12px;">Put photos in the same folder and replace the boxes with &lt;img&gt; tags.</p>
-
-      <div class="gallery">
-        <!-- Replace these placeholders with images like:
-             <img src="photo1.jpg" style="width:100%; border-radius:14px; border:1px solid #eee;" />
-        -->
-        <div class="ph">Photo 1</div>
-        <div class="ph">Photo 2</div>
-        <div class="ph">Photo 3</div>
-        <div class="ph">Photo 4</div>
-        <div class="ph">Photo 5</div>
-        <div class="ph">Photo 6</div>
-      </div>
-    </section>
-
-    <section class="card two">
-      <div class="title">🎵 Playlist</div>
-      <p>Add a Spotify/YouTube link here: <a href="#">Your playlist link</a></p>
-    </section>
-
-    <section class="card two">
-      <div class="title">🗓️ Countdown recap</div>
-      <p>After his birthday, you can convert this site into a “Year together” tracker or “Next trip” countdown.</p>
-    </section>
-  </div>
-</main>
 
 <script>
-  // Simple lock check
+  // 🔒 Lock check
   if (localStorage.getItem("unlocked") !== "yes") {
     window.location.href = "index.html";
   }
 
+  // Buttons
   document.getElementById("logout").addEventListener("click", () => {
     localStorage.removeItem("unlocked");
     window.location.href = "index.html";
   });
-
   document.getElementById("scrollGallery").addEventListener("click", () => {
     document.getElementById("gallery").scrollIntoView({behavior:"smooth"});
   });
-  document.getElementById("scrollLetters").addEventListener("click", () => {
-    document.getElementById("letters").scrollIntoView({behavior:"smooth"});
+  document.getElementById("scrollMemories").addEventListener("click", () => {
+    document.getElementById("memories").scrollIntoView({behavior:"smooth"});
   });
+
+  // --- 🎈 Balloons generator ---
+  function spawnBalloons(count = 14){
+    const colors = ["#ff3b8a","#ff7aa2","#ffd166","#7bdff2","#bdb2ff","#a0f4b7"];
+    for(let i=0;i<count;i++){
+      const b = document.createElement("div");
+      b.className = "balloon";
+      b.style.left = Math.random()*100 + "vw";
+      b.style.background = colors[Math.floor(Math.random()*colors.length)];
+      b.style.animationDuration = (6 + Math.random()*4) + "s";
+      b.style.setProperty("--drift", (Math.random()*120 - 60) + "px");
+      b.style.setProperty("--spin", (Math.random()*40 - 20) + "deg");
+      b.style.filter = `saturate(${1 + Math.random()*0.4})`;
+      document.body.appendChild(b);
+
+      // Remove after animation
+      setTimeout(()=> b.remove(), 11000);
+    }
+  }
+
+  // --- 🎉 Poppers burst (small particles) ---
+  function poppersBurst(x, y, pieces=50){
+    for(let i=0;i<pieces;i++){
+      const p = document.createElement("div");
+      p.className = "popper";
+      p.style.left = x + "px";
+      p.style.top = y + "px";
+      p.style.background = `hsl(${Math.floor(Math.random()*360)}, 90%, 60%)`;
+      p.style.setProperty("--x", (Math.random()*360 - 180) + "px");
+      p.style.setProperty("--y", (Math.random()*-260 - 40) + "px");
+      document.body.appendChild(p);
+      setTimeout(()=> p.remove(), 900);
+    }
+  }
+
+  // --- 🎊 Confetti canvas (lightweight) ---
+  const canvas = document.getElementById("confettiCanvas");
+  const ctx = canvas.getContext("2d");
+  function resize(){
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  window.addEventListener("resize", resize);
+  resize();
+
+  let confetti = [];
+  function startConfetti(durationMs = 2200){
+    confetti = Array.from({length: 180}, ()=> ({
+      x: Math.random()*canvas.width,
+      y: -20 - Math.random()*canvas.height*0.3,
+      r: 3 + Math.random()*4,
+      vy: 2 + Math.random()*4,
+      vx: -1 + Math.random()*2,
+      rot: Math.random()*Math.PI,
+      vrot: -0.15 + Math.random()*0.3,
+      color: `hsl(${Math.floor(Math.random()*360)}, 90%, 60%)`
+    }));
+
+    const start = performance.now();
+    function frame(t){
+      const elapsed = t - start;
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+
+      confetti.forEach(c=>{
+        c.x += c.vx;
+        c.y += c.vy;
+        c.rot += c.vrot;
+
+        ctx.save();
+        ctx.translate(c.x, c.y);
+        ctx.rotate(c.rot);
+        ctx.fillStyle = c.color;
+        ctx.fillRect(-c.r, -c.r, c.r*2.2, c.r*1.2);
+        ctx.restore();
+      });
+
+      // recycle out-of-screen
+      confetti.forEach(c=>{
+        if(c.y > canvas.height + 30){
+          c.y = -20;
+          c.x = Math.random()*canvas.width;
+        }
+      });
+
+      if(elapsed < durationMs){
+        requestAnimationFrame(frame);
+      }else{
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+
+  // --- Greeting modal behavior ---
+  const modal = document.getElementById("greetingModal");
+  const closeBtn = document.getElementById("closeCard");
+
+  function openGreeting(){
+    modal.style.display = "grid";
+    modal.setAttribute("aria-hidden","false");
+
+    // Start celebration effects immediately
+    startConfetti(2400);
+    spawnBalloons(16);
+
+    // Popper burst from center
+    poppersBurst(window.innerWidth/2, window.innerHeight*0.35, 70);
+  }
+
+  function closeGreeting(){
+    modal.style.display = "none";
+    modal.setAttribute("aria-hidden","true");
+
+    // A second burst when entering the page content
+    startConfetti(1700);
+    poppersBurst(window.innerWidth/2, window.innerHeight*0.25, 60);
+    spawnBalloons(10);
+  }
+
+  closeBtn.addEventListener("click", closeGreeting);
+
+  // Click outside closes too (optional)
+  modal.addEventListener("click", (e)=>{
+    if(e.target === modal) closeGreeting();
+  });
+
+  // Open on load
+  openGreeting();
 </script>
 </body>
 </html>
