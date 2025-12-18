@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>A Message</title>
+  <style>
+    :root{ --pink:#ff3b8a; }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      display:grid;
+      place-items:center;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background: linear-gradient(180deg,#ffeaf3 0%, #ffffff 75%);
+      color:#111;
+      overflow-x:hidden;
+    }
+
+    .wrap{ width:min(980px, 94vw); padding:26px 0 60px; }
+
+    .title{
+      text-align:center;
+      font-weight:900;
+      font-size:30px;
+      margin:0 0 14px;
+    }
+    .subtitle{
+      text-align:center;
+      margin:0 0 18px;
+      color:#444;
+      font-size:14px;
+    }
+
+    /* Envelope */
+    .envArea{
+      display:grid;
+      place-items:center;
+      padding:10px 0 24px;
+    }
+    .envelope{
+      width:min(520px, 92vw);
+      height:320px;
+      position:relative;
+      border-radius:18px;
+      background: linear-gradient(145deg,#b30b2f,#ff2d55);
+      box-shadow: 0 22px 50px rgba(0,0,0,.18);
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.25);
+    }
+    .string{
+      position:absolute;
+      left:50%;
+      top:50%;
+      width:120%;
+      height:4px;
+      transform:translate(-50%,-50%) rotate(-12deg);
+      background: rgba(255,255,255,.25);
+    }
+    .pin{
+      position:absolute;
+      top:16px; right:18px;
+      width:14px; height:14px;
+      border-radius:50%;
+      background:#ffd166;
+      box-shadow: 0 0 0 4px rgba(255,209,102,.35);
+    }
+
+    .flap{
+      position:absolute;
+      top:-40px; left:-40px; right:-40px;
+      height:220px;
+      background: rgba(255,255,255,.08);
+      transform-origin: top center;
+      transform: rotateX(0deg);
+      clip-path: polygon(50% 90%, 0 0, 100% 0);
+      transition: transform .8s ease;
+    }
+
+    .openBtn{
+      position:absolute;
+      left:50%;
+      top:50%;
+      transform:translate(-50%,-50%);
+      border:0;
+      padding:12px 18px;
+      border-radius:999px;
+      background:#ffffff;
+      color:#111;
+      font-weight:900;
+      cursor:pointer;
+      box-shadow: 0 14px 28px rgba(0,0,0,.18);
+    }
+
+    /* Letter */
+    .letter{
+      position:absolute;
+      left:50%;
+      bottom:-220px;
+      transform:translateX(-50%);
+      width:86%;
+      background:#fff;
+      border-radius:16px;
+      padding:16px;
+      border:1px solid #eee;
+      box-shadow: 0 18px 40px rgba(0,0,0,.2);
+      transition: bottom .9s ease;
+    }
+    .letter h2{
+      margin:0 0 8px;
+      font-size:20px;
+      font-weight:900;
+      color:#d21e67;
+    }
+    .letter p{ margin:0; color:#333; line-height:1.55; }
+
+    /* Open state */
+    .envelope.open .flap{ transform: rotateX(180deg); }
+    .envelope.open .letter{ bottom:16px; }
+    .envelope.open .openBtn{ display:none; }
+
+    /* Content revealed */
+    .content{
+      margin-top:22px;
+      opacity:0;
+      transform: translateY(10px);
+      pointer-events:none;
+      transition: .5s ease;
+    }
+    .content.show{
+      opacity:1;
+      transform: translateY(0);
+      pointer-events:auto;
+    }
+
+    .grid{ display:grid; gap:14px; grid-template-columns: repeat(12, 1fr); }
+    .card{
+      grid-column: span 12;
+      background:#ffffffee;
+      border:1px solid #eee;
+      border-radius:18px;
+      padding:16px;
+      box-shadow: 0 10px 22px rgba(0,0,0,.06);
+    }
+    .two{ grid-column: span 12; }
+    @media (min-width: 860px){ .two{ grid-column: span 6; } }
+    .ctitle{ font-weight:900; margin-bottom:10px; }
+
+    .gallery{ display:grid; grid-template-columns: repeat(2, 1fr); gap:10px; }
+    @media (min-width:720px){ .gallery{ grid-template-columns: repeat(3, 1fr); } }
+    .gallery img{
+      width:100%;
+      border-radius:14px;
+      border:1px solid #eee;
+      display:block;
+      aspect-ratio:1/1;
+      object-fit:cover;
+    }
+    .ph{
+      aspect-ratio:1/1;
+      border-radius:14px;
+      border:1px dashed #ccc;
+      display:grid;
+      place-items:center;
+      color:#666;
+      background:#fafafa;
+      font-weight:700;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1 class="title">💌 A Message From My Heart</h1>
+    <p class="subtitle">Click the button to open the card… then your memories will appear ❤️</p>
+
+    <div class="envArea">
+      <div class="envelope" id="env">
+        <div class="pin"></div>
+        <div class="string"></div>
+        <div class="flap"></div>
+
+        <button class="openBtn" id="openBtn">Click to Open ✨</button>
+
+        <div class="letter">
+          <h2 id="hbd">Happy Birthday, NAME ❤️</h2>
+          <p id="note">
+            You’re my best friend and my whole world. Without you, so many things in my life wouldn’t feel right —
+            but with you, everything falls beautifully into place. 💗
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="content" id="content">
+      <div class="grid">
+        <section class="card two">
+          <div class="ctitle">🗓️ Our favourite moments</div>
+          <ul style="margin:0 0 0 18px; color:#333; line-height:1.65;">
+            <li>Our first date: ____</li>
+            <li>Our funniest moment: ____</li>
+            <li>Our best day together: ____</li>
+            <li>What I love about you: ____</li>
+          </ul>
+        </section>
+
+        <section class="card two">
+          <div class="ctitle">🎵 Playlist</div>
+          <p style="margin:0;color:#333">Add your Spotify/YouTube link here.</p>
+        </section>
+
+        <section class="card">
+          <div class="ctitle">📸 Photos</div>
+          <p style="margin:0 0 12px;color:#444">
+            Upload photos to the repo and replace placeholders with <b>&lt;img src="photos/photo1.jpg"&gt;</b>
+          </p>
+
+          <div class="gallery">
+            <div class="ph">Photo 1</div>
+            <div class="ph">Photo 2</div>
+            <div class="ph">Photo 3</div>
+            <div class="ph">Photo 4</div>
+            <div class="ph">Photo 5</div>
+            <div class="ph">Photo 6</div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+<script>
+  if(localStorage.getItem("unlocked") !== "yes"){
+    window.location.href = "index.html";
+  }
+
+  const config = {
+    NAME: "Divyanshi" // ✅ change
+  };
+
+  document.getElementById("hbd").textContent = `Happy Birthday, ${config.NAME} ❤️`;
+
+  const env = document.getElementById("env");
+  const btn = document.getElementById("openBtn");
+  const content = document.getElementById("content");
+
+  btn.addEventListener("click", ()=>{
+    env.classList.add("open");
+    setTimeout(()=> content.classList.add("show"), 650);
+  });
+</script>
+</body>
+</html>
