@@ -126,122 +126,125 @@
   </div>
 
 <script>
---  const config = {
---    NAME: "Sayan(kuku)",                  // ✅ change
---    BIRTHDAY: "2025-12-23T00:00:00"     // ✅ change (midnight)
---  };
+  /* ================= CONFIG ================= */
+  const CONFIG = {
+    DISPLAY_NAME: "Kuku",            // what shows on screen
+    REAL_NAME: "Sayan",
 
-  document.getElementById("BOYFRIEND_NAME").textContent = config.NAME;
+    // 🎂 Birthday timing (LOCAL TIME)
+    RELEASE_START: "2025-12-23T00:00:00", // midnight
+    RELEASE_END:   "2025-12-23T10:00:00", // deactivate after morning (change if needed)
+
+    // 🔓 Preview mode for YOU
+    // use: index.html?preview=1&key=kuku
+    PREVIEW_KEY: "kuku"
+  };
+
+  /* ============== HELPERS =================== */
+  function isPreviewMode(){
+    const p = new URLSearchParams(window.location.search);
+    return p.get("preview") === "1" && p.get("key") === CONFIG.PREVIEW_KEY;
+  }
+
+  function beforeRelease(){
+    return new Date() < new Date(CONFIG.RELEASE_START);
+  }
+
+  function withinRelease(){
+    const now = new Date();
+    return now >= new Date(CONFIG.RELEASE_START) &&
+           now <  new Date(CONFIG.RELEASE_END);
+  }
+
+  function afterRelease(){
+    return new Date() >= new Date(CONFIG.RELEASE_END);
+  }
+
+  const pad = (n)=> String(n).padStart(2,"0");
+
+  /* ============== DOM =================== */
+  document.getElementById("name").textContent = CONFIG.DISPLAY_NAME;
 
   const hh = document.getElementById("hh");
   const mm = document.getElementById("mm");
   const ss = document.getElementById("ss");
   const goBtn = document.getElementById("goBtn");
 
-  const target = new Date(config.BIRTHDAY);
+  const target = new Date(CONFIG.RELEASE_START);
 
-  const pad = (n)=> String(n).padStart(2,"0");
-  const CONFIG = {
-  BOYFRIEND_NAME: "Sayan",
-  NICKNAME: "Kuku",
-
-  // ✅ Release window (edit times anytime)
-  RELEASE_START: "2025-12-23T00:00:00",  // midnight
-  RELEASE_END:   "2025-12-23T10:00:00",  // "23rd morning" cutoff (change to 08:00/12:00 etc.)
-
-  // ✅ Preview link for YOU (so you can navigate & edit now)
-  // Open any page with ?preview=1&key=kuku
-  PREVIEW_KEY: "kuku"
-};
-
-function isPreviewMode(){
-  const p = new URLSearchParams(location.search);
-  return p.get("preview") === "1" && p.get("key") === CONFIG.PREVIEW_KEY;
-}
-
-function withinReleaseWindow(){
-  const now = new Date();
-  const start = new Date(CONFIG.RELEASE_START);
-  const end   = new Date(CONFIG.RELEASE_END);
-  return now >= start && now < end;
-}
-
-function beforeRelease(){
-  return new Date() < new Date(CONFIG.RELEASE_START);
-}
-
-function afterReleaseEnd(){
-  return new Date() >= new Date(CONFIG.RELEASE_END);
-}  
+  /* ============== LOGIC =================== */
+  function setButton(enabled, text){
+    if(enabled){
+      goBtn.classList.add("enabled");
+    }else{
+      goBtn.classList.remove("enabled");
+    }
+    if(text) goBtn.textContent = text;
+  }
 
   function tick(){
-    const nameEl = document.getElementById("name");
-nameEl.textContent = CONFIG.NICKNAME; // show Kuku on screen (you can switch to BOYFRIEND_NAME)
+    // 🧪 PREVIEW MODE — always enabled for editing
+    if(isPreviewMode()){
+      setButton(true, "Let’s Celebrate");
+      return;
+    }
 
-const goBtn = document.getElementById("goBtn");
+    const now = new Date();
 
-function setBtn(enabled){
-  if(enabled){
-    goBtn.classList.add("enabled");
-  }else{
-    goBtn.classList.remove("enabled");
-  }
-}
+    // ⏳ BEFORE BIRTHDAY
+    if(beforeRelease()){
+      let diff = target - now;
 
-function tick(){
-  // ✅ If you're previewing, always enable button so you can test flow
-  if(isPreviewMode()){
-    setBtn(true);
-    return;
-  }
+      const h = Math.max(0, Math.floor(diff / (1000*60*60)));
+      diff -= h * (1000*60*60);
+      const m = Math.max(0, Math.floor(diff / (1000*60)));
+      diff -= m * (1000*60);
+      const s = Math.max(0, Math.floor(diff / 1000));
 
-  // ✅ Live behavior
-  if(beforeRelease()){
-    // countdown continues; keep button disabled
-    setBtn(false);
-    return;
-  }
+      hh.textContent = pad(h);
+      mm.textContent = pad(m);
+      ss.textContent = pad(s);
 
-  if(withinReleaseWindow()){
-    // birthday window active
-    setBtn(true);
-    return;
-  }
+      setButton(false, "Let’s Celebrate");
+      return;
+    }
 
-  if(afterReleaseEnd()){
-    // you asked: deactivate on 23rd morning
-    setBtn(false);
-    goBtn.textContent = "Come back later ❤️";
-    return;
-  }
-}
+    // 🎉 DURING BIRTHDAY WINDOW
+    if(withinRelease()){
+      hh.textContent = "00";
+      mm.textContent = "00";
+      ss.textContent = "00";
 
-setInterval(tick, 1000);
-tick();
+      setButton(true, "Let’s Celebrate 🎉");
+      localStorage.setItem("unlocked", "yes");
+      return;
+    }
 
-goBtn.addEventListener("click", ()=>{
-  // preview can navigate anytime
-  if(isPreviewMode()){
-    localStorage.setItem("unlocked","yes");
-    location.href = "birthday.html?preview=1&key=" + CONFIG.PREVIEW_KEY;
-    return;
-  }
+    // ⛔ AFTER MORNING CUTOFF
+    if(afterRelease()){
+      hh.textContent = "00";
+      mm.textContent = "00";
+      ss.textContent = "00";
 
-  // live navigation only within release window
-  if(withinReleaseWindow()){
-    localStorage.setItem("unlocked","yes");
-    location.href = "birthday.html";
-  }
-});
-
+      setButton(false, "Come back later ❤️");
+      return;
+    }
   }
 
   setInterval(tick, 1000);
   tick();
 
+  /* ============== NAVIGATION =================== */
   goBtn.addEventListener("click", ()=>{
-    if(!goBtn.classList.contains("enabled")) return;
-    window.location.href = "birthday.html";
+    if(isPreviewMode()){
+      localStorage.setItem("unlocked","yes");
+      window.location.href = "birthday.html?preview=1&key=" + CONFIG.PREVIEW_KEY;
+      return;
+    }
+
+    if(withinRelease()){
+      window.location.href = "birthday.html";
+    }
   });
 </script>
 </body>
