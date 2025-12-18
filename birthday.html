@@ -71,13 +71,39 @@
   </div>
 
 <script>
-  // 🔒 basic lock
-  if(localStorage.getItem("unlocked") !== "yes"){
-    window.location.href = "index.html";
+  /* ================= CONFIG ================= */
+  const CONFIG = {
+    DISPLAY_NAME: "Kuku",
+    REAL_NAME: "Sayan",
+
+    RELEASE_START: "2025-12-23T00:00:00",
+    RELEASE_END:   "2025-12-23T10:00:00",
+
+    PREVIEW_KEY: "kuku"
+  };
+
+  function isPreviewMode(){
+    const p = new URLSearchParams(window.location.search);
+    return p.get("preview") === "1" && p.get("key") === CONFIG.PREVIEW_KEY;
   }
 
-  const config = { NAME:"Sayan(Kuku)" }; // ✅ change
-  document.getElementById("name").textContent = config.NAME;
+  function withinRelease(){
+    const now = new Date();
+    return now >= new Date(CONFIG.RELEASE_START) &&
+           now <  new Date(CONFIG.RELEASE_END);
+  }
+
+  // 🔒 Access rules:
+  // - Preview mode => allow always
+  // - Live mode => allow only if unlocked AND within release window
+  if(!isPreviewMode()){
+    if(localStorage.getItem("unlocked") !== "yes" || !withinRelease()){
+      window.location.href = "index.html";
+    }
+  }
+
+  // ✅ Show name
+  document.getElementById("name").textContent = CONFIG.DISPLAY_NAME;
 
   // Confetti / poppers canvas
   const canvas = document.getElementById("c");
@@ -116,12 +142,18 @@
     parts = parts.filter(p=> p.life>0 && p.y<canvas.height+30);
     requestAnimationFrame(anim);
   }
+
   burst(); anim();
   setTimeout(burst, 700);
   setTimeout(burst, 1400);
 
+  // ✅ Navigation
   document.getElementById("next").addEventListener("click", ()=>{
-    window.location.href = "celebrate.html";
+    if(isPreviewMode()){
+      window.location.href = "celebrate.html?preview=1&key=" + CONFIG.PREVIEW_KEY;
+    } else {
+      window.location.href = "celebrate.html";
+    }
   });
 </script>
 </body>
