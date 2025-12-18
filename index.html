@@ -106,38 +106,7 @@
     }
   </style>
 </head>
-const CONFIG = {
-  BOYFRIEND_NAME: "Sayan",
-  NICKNAME: "Kuku",
 
-  // ✅ Release window (edit times anytime)
-  RELEASE_START: "2025-12-23T00:00:00",  // midnight
-  RELEASE_END:   "2025-12-23T10:00:00",  // "23rd morning" cutoff (change to 08:00/12:00 etc.)
-
-  // ✅ Preview link for YOU (so you can navigate & edit now)
-  // Open any page with ?preview=1&key=kuku
-  PREVIEW_KEY: "kuku"
-};
-
-function isPreviewMode(){
-  const p = new URLSearchParams(location.search);
-  return p.get("preview") === "1" && p.get("key") === CONFIG.PREVIEW_KEY;
-}
-
-function withinReleaseWindow(){
-  const now = new Date();
-  const start = new Date(CONFIG.RELEASE_START);
-  const end   = new Date(CONFIG.RELEASE_END);
-  return now >= start && now < end;
-}
-
-function beforeRelease(){
-  return new Date() < new Date(CONFIG.RELEASE_START);
-}
-
-function afterReleaseEnd(){
-  return new Date() >= new Date(CONFIG.RELEASE_END);
-}  
 <body>
   <div class="wrap">
     <h1>Counting down to <span class="name" id="name">BOYFRIEND_NAME</span>’s <br/> special day 🎂</h1>
@@ -172,6 +141,38 @@ function afterReleaseEnd(){
   const target = new Date(config.BIRTHDAY);
 
   const pad = (n)=> String(n).padStart(2,"0");
+  const CONFIG = {
+  BOYFRIEND_NAME: "Sayan",
+  NICKNAME: "Kuku",
+
+  // ✅ Release window (edit times anytime)
+  RELEASE_START: "2025-12-23T00:00:00",  // midnight
+  RELEASE_END:   "2025-12-23T10:00:00",  // "23rd morning" cutoff (change to 08:00/12:00 etc.)
+
+  // ✅ Preview link for YOU (so you can navigate & edit now)
+  // Open any page with ?preview=1&key=kuku
+  PREVIEW_KEY: "kuku"
+};
+
+function isPreviewMode(){
+  const p = new URLSearchParams(location.search);
+  return p.get("preview") === "1" && p.get("key") === CONFIG.PREVIEW_KEY;
+}
+
+function withinReleaseWindow(){
+  const now = new Date();
+  const start = new Date(CONFIG.RELEASE_START);
+  const end   = new Date(CONFIG.RELEASE_END);
+  return now >= start && now < end;
+}
+
+function beforeRelease(){
+  return new Date() < new Date(CONFIG.RELEASE_START);
+}
+
+function afterReleaseEnd(){
+  return new Date() >= new Date(CONFIG.RELEASE_END);
+}  
 
   function tick(){
     const nameEl = document.getElementById("name");
