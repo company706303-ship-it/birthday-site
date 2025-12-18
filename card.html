@@ -229,24 +229,56 @@
   </div>
 
 <script>
-  if(localStorage.getItem("unlocked") !== "yes"){
-    window.location.href = "index.html";
-  }
+  /* ================= CONFIG ================= */
+  const CONFIG = {
+    DISPLAY_NAME: "Kuku",
+    REAL_NAME: "Sayan",
 
-  const config = {
-    NAME: "Sayan(Kuku)" // ✅ change
+    RELEASE_START: "2025-12-23T00:00:00",
+    RELEASE_END:   "2025-12-23T10:00:00",
+
+    PREVIEW_KEY: "kuku"
   };
 
-  document.getElementById("hbd").textContent = `Happy Birthday, ${config.NAME} ❤️`;
+  /* ================= HELPERS ================= */
+  function isPreviewMode(){
+    const p = new URLSearchParams(window.location.search);
+    return p.get("preview") === "1" && p.get("key") === CONFIG.PREVIEW_KEY;
+  }
 
+  function withinRelease(){
+    const now = new Date();
+    return now >= new Date(CONFIG.RELEASE_START) &&
+           now <  new Date(CONFIG.RELEASE_END);
+  }
+
+  /* ================= ACCESS CONTROL ================= */
+  // Preview → always allowed
+  // Live → only if unlocked + within birthday window
+  if(!isPreviewMode()){
+    if(localStorage.getItem("unlocked") !== "yes" || !withinRelease()){
+      window.location.href = "index.html";
+    }
+  }
+
+  /* ================= CONTENT ================= */
+  document.getElementById("hbd").textContent =
+    `Happy Birthday, ${CONFIG.DISPLAY_NAME} ❤️`;
+
+  /* ================= INTERACTION ================= */
   const env = document.getElementById("env");
   const btn = document.getElementById("openBtn");
   const content = document.getElementById("content");
 
   btn.addEventListener("click", ()=>{
     env.classList.add("open");
-    setTimeout(()=> content.classList.add("show"), 650);
+
+    // reveal memories after envelope opens
+    setTimeout(()=>{
+      content.classList.add("show");
+    }, 650);
   });
 </script>
+
 </body>
 </html>
