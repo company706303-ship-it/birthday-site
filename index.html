@@ -1,3 +1,37 @@
+const CONFIG = {
+  BOYFRIEND_NAME: "Sayan",
+  NICKNAME: "Kuku",
+
+  // ✅ Release window (edit times anytime)
+  RELEASE_START: "2025-12-23T00:00:00",  // midnight
+  RELEASE_END:   "2025-12-23T10:00:00",  // "23rd morning" cutoff (change to 08:00/12:00 etc.)
+
+  // ✅ Preview link for YOU (so you can navigate & edit now)
+  // Open any page with ?preview=1&key=kuku
+  PREVIEW_KEY: "kuku"
+};
+
+function isPreviewMode(){
+  const p = new URLSearchParams(location.search);
+  return p.get("preview") === "1" && p.get("key") === CONFIG.PREVIEW_KEY;
+}
+
+function withinReleaseWindow(){
+  const now = new Date();
+  const start = new Date(CONFIG.RELEASE_START);
+  const end   = new Date(CONFIG.RELEASE_END);
+  return now >= start && now < end;
+}
+
+function beforeRelease(){
+  return new Date() < new Date(CONFIG.RELEASE_START);
+}
+
+function afterReleaseEnd(){
+  return new Date() >= new Date(CONFIG.RELEASE_END);
+}
+
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -125,7 +159,7 @@
 
 <script>
   const config = {
-    NAME: "Divyanshi",                  // ✅ change
+    NAME: "Sayan(kuku)",                  // ✅ change
     BIRTHDAY: "2025-12-23T00:00:00"     // ✅ change (midnight)
   };
 
@@ -141,26 +175,65 @@
   const pad = (n)=> String(n).padStart(2,"0");
 
   function tick(){
-    const now = new Date();
-    let diff = target - now;
+    const nameEl = document.getElementById("name");
+nameEl.textContent = CONFIG.NICKNAME; // show Kuku on screen (you can switch to BOYFRIEND_NAME)
 
-    if(diff <= 0){
-      hh.textContent = "00"; mm.textContent = "00"; ss.textContent = "00";
-      goBtn.classList.add("enabled");
-      // allow entry to next page
-      localStorage.setItem("unlocked", "yes");
-      return;
-    }
+const goBtn = document.getElementById("goBtn");
 
-    const h = Math.floor(diff / (1000*60*60));
-    diff -= h * (1000*60*60);
-    const m = Math.floor(diff / (1000*60));
-    diff -= m * (1000*60);
-    const s = Math.floor(diff / 1000);
+function setBtn(enabled){
+  if(enabled){
+    goBtn.classList.add("enabled");
+  }else{
+    goBtn.classList.remove("enabled");
+  }
+}
 
-    hh.textContent = pad(h);
-    mm.textContent = pad(m);
-    ss.textContent = pad(s);
+function tick(){
+  // ✅ If you're previewing, always enable button so you can test flow
+  if(isPreviewMode()){
+    setBtn(true);
+    return;
+  }
+
+  // ✅ Live behavior
+  if(beforeRelease()){
+    // countdown continues; keep button disabled
+    setBtn(false);
+    return;
+  }
+
+  if(withinReleaseWindow()){
+    // birthday window active
+    setBtn(true);
+    return;
+  }
+
+  if(afterReleaseEnd()){
+    // you asked: deactivate on 23rd morning
+    setBtn(false);
+    goBtn.textContent = "Come back later ❤️";
+    return;
+  }
+}
+
+setInterval(tick, 1000);
+tick();
+
+goBtn.addEventListener("click", ()=>{
+  // preview can navigate anytime
+  if(isPreviewMode()){
+    localStorage.setItem("unlocked","yes");
+    location.href = "birthday.html?preview=1&key=" + CONFIG.PREVIEW_KEY;
+    return;
+  }
+
+  // live navigation only within release window
+  if(withinReleaseWindow()){
+    localStorage.setItem("unlocked","yes");
+    location.href = "birthday.html";
+  }
+});
+
   }
 
   setInterval(tick, 1000);
