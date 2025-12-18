@@ -3,93 +3,173 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>For You ❤️</title>
+  <title>Countdown</title>
   <style>
-    body { font-family: system-ui, Arial; margin:0; min-height:100vh; display:grid; place-items:center;
-      background: radial-gradient(circle at top, #ffe6f2, #fff); color:#111; }
-    .card { width:min(520px, 92vw); background:#ffffffcc; backdrop-filter: blur(8px);
-      border:1px solid #eee; border-radius:20px; padding:24px; box-shadow: 0 10px 30px rgba(0,0,0,.08); }
-    h1 { margin:0 0 6px; font-size:28px; }
-    p { margin:0 0 18px; color:#333; line-height:1.4; }
-    .count { font-size:20px; margin:14px 0 18px; padding:14px; border-radius:16px; background:#fff; border:1px solid #f0f0f0; }
-    .grid { display:grid; gap:10px; }
-    input { width:100%; padding:12px 14px; border-radius:12px; border:1px solid #ddd; font-size:16px; }
-    button { padding:12px 14px; border-radius:12px; border:0; font-size:16px; cursor:pointer; background:#ff3b8a; color:white; }
-    button:hover { filter:brightness(.95); }
-    .hint { font-size:13px; color:#555; }
-    .err { color:#b00020; font-size:14px; min-height:18px; }
-    .tiny { font-size:12px; color:#666; margin-top:10px; }
+    :root{
+      --pink:#ff3b8a;
+      --bg:#fde7f0;
+      --text:#111;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      display:grid;
+      place-items:center;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background: linear-gradient(180deg,#ffeaf3 0%, #ffffff 70%);
+      color:var(--text);
+    }
+    .wrap{
+      width:min(820px, 94vw);
+      padding:22px 16px;
+      display:grid;
+      place-items:center;
+      text-align:center;
+    }
+    h1{
+      margin:0 0 10px;
+      font-size:40px;
+      font-weight:800;
+    }
+    h1 .name{ color:var(--pink); }
+    .sub{
+      margin:0 0 18px;
+      color:#333;
+      font-size:15px;
+    }
+    .bigline{
+      margin:18px 0 8px;
+      font-size:16px;
+      color:#d21e67;
+      font-weight:700;
+    }
+    .timer{
+      display:flex;
+      gap:14px;
+      justify-content:center;
+      flex-wrap:wrap;
+      margin:10px 0 14px;
+    }
+    .tbox{
+      background:#fff;
+      border:1px solid #f0c8d7;
+      border-radius:18px;
+      padding:14px 16px;
+      width:110px;
+      box-shadow: 0 10px 24px rgba(0,0,0,.06);
+    }
+    .num{
+      font-size:34px;
+      font-weight:900;
+      color:#d21e67;
+      line-height:1;
+    }
+    .lab{
+      margin-top:6px;
+      font-size:12px;
+      color:#555;
+      letter-spacing:.6px;
+      text-transform:uppercase;
+    }
+    .msg{
+      margin:10px 0 12px;
+      color:#444;
+      font-size:13px;
+    }
+    .btn{
+      margin-top:8px;
+      border:0;
+      padding:14px 22px;
+      border-radius:999px;
+      font-size:16px;
+      font-weight:800;
+      cursor:pointer;
+      background: var(--pink);
+      color:#fff;
+      box-shadow: 0 12px 26px rgba(255,59,138,.35);
+      opacity:.55;
+      pointer-events:none;
+      transition:.2s;
+    }
+    .btn.enabled{
+      opacity:1;
+      pointer-events:auto;
+    }
+    .btn:active{ transform: translateY(1px); }
+
+    .tiny{
+      margin-top:14px;
+      font-size:12px;
+      color:#666;
+    }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>Welcome, my love kuku ❤️</h1>
-    <p>One small door before the surprise. Your birthday is coming my handsome…</p>
+  <div class="wrap">
+    <h1>Counting down to <span class="name" id="name">NAME</span>’s <br/> special day 🎂</h1>
+    <p class="sub" id="line2">You mean more to me than words can ever explain 💗</p>
 
-    <div class="count" id="countdown">Loading countdown…</div>
-
-    <div class="grid">
-      <label>
-        <div class="hint">Enter the secret code</div>
-        
-      </label>
-      <button id="enterBtn">Enter</button>
-      <div class="err" id="msg"></div>
+    <div class="timer" aria-label="countdown">
+      <div class="tbox"><div class="num" id="hh">00</div><div class="lab">Hours</div></div>
+      <div class="tbox"><div class="num" id="mm">00</div><div class="lab">Minutes</div></div>
+      <div class="tbox"><div class="num" id="ss">00</div><div class="lab">Seconds</div></div>
     </div>
 
-    <div class="tiny">Tip: Keep the code simple & romantic (not your real password).</div>
+    <div class="bigline">✨ A special celebration awaits you at midnight… ✨</div>
+    <div class="msg">Something magical is about to unfold 💞</div>
+
+    <button class="btn" id="goBtn">Let’s Celebrate</button>
+    <div class="tiny">(Button activates when countdown ends)</div>
   </div>
 
 <script>
-  // ✅ Set his birthday date/time (local time)
-  // If you want it to unlock exactly at midnight, keep 00:00.
-  const birthday = new Date("2025-12-23T00:00:00"); // <-- change year if needed
+  const config = {
+    NAME: "Divyanshi",                  // ✅ change
+    BIRTHDAY: "2025-12-23T00:00:00"     // ✅ change (midnight)
+  };
 
-  // ✅ Secret code for "login" (cute passcode)
-  const SECRET = "2312"; // <-- change this
+  document.getElementById("name").textContent = config.NAME;
 
-  const cdEl = document.getElementById("countdown");
-  const msgEl = document.getElementById("msg");
-  const codeEl = document.getElementById("code");
+  const hh = document.getElementById("hh");
+  const mm = document.getElementById("mm");
+  const ss = document.getElementById("ss");
+  const goBtn = document.getElementById("goBtn");
 
-  function pad(n){ return String(n).padStart(2,"0"); }
+  const target = new Date(config.BIRTHDAY);
 
-  function updateCountdown(){
+  const pad = (n)=> String(n).padStart(2,"0");
+
+  function tick(){
     const now = new Date();
-    let diff = birthday - now;
+    let diff = target - now;
 
-    if (diff <= 0) {
-      cdEl.textContent = "Happy Birthday!!! 🎉 Click Enter with the code ❤️";
+    if(diff <= 0){
+      hh.textContent = "00"; mm.textContent = "00"; ss.textContent = "00";
+      goBtn.classList.add("enabled");
+      // allow entry to next page
+      localStorage.setItem("unlocked", "yes");
       return;
     }
 
-    const d = Math.floor(diff / (1000*60*60*24));
-    diff -= d * (1000*60*60*24);
     const h = Math.floor(diff / (1000*60*60));
     diff -= h * (1000*60*60);
     const m = Math.floor(diff / (1000*60));
     diff -= m * (1000*60);
     const s = Math.floor(diff / 1000);
 
-    cdEl.textContent = `${d} days • ${pad(h)}:${pad(m)}:${pad(s)} until your birthday 💖`;
+    hh.textContent = pad(h);
+    mm.textContent = pad(m);
+    ss.textContent = pad(s);
   }
 
-  setInterval(updateCountdown, 1000);
-  updateCountdown();
+  setInterval(tick, 1000);
+  tick();
 
-  function enter(){
-    const v = codeEl.value.trim();
-    if (v === SECRET) {
-      // store a simple "unlocked" flag
-      localStorage.setItem("unlocked", "yes");
-      window.location.href = "memories.html";
-    } else {
-      msgEl.textContent = "Hmm… not that one 😄 Try again.";
-    }
-  }
-
-  document.getElementById("enterBtn").addEventListener("click", enter);
-  codeEl.addEventListener("keydown", (e)=> { if(e.key==="Enter") enter(); });
+  goBtn.addEventListener("click", ()=>{
+    if(!goBtn.classList.contains("enabled")) return;
+    window.location.href = "birthday.html";
+  });
 </script>
 </body>
 </html>
