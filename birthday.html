@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>It’s Your Birthday!</title>
+  <style>
+    :root{ --pink:#ff3b8a; }
+    *{box-sizing:border-box}
+    body{
+      margin:0; min-height:100vh;
+      display:grid; place-items:center;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background: linear-gradient(180deg,#ffeaf3 0%, #ffffff 70%);
+      overflow:hidden;
+    }
+    canvas{ position:fixed; inset:0; pointer-events:none; }
+    .box{
+      width:min(820px,94vw);
+      text-align:center;
+      padding:24px 16px;
+    }
+    h1{ margin:0; font-size:52px; font-weight:900; }
+    h1 .name{ color:var(--pink); }
+    .small{
+      margin:8px 0 18px;
+      color:#333;
+      font-size:14px;
+    }
+    .big{
+      font-size:36px;
+      font-weight:900;
+      color:#d21e67;
+      margin:8px 0 10px;
+      animation: pop .55s ease-out both;
+    }
+    @keyframes pop{
+      from{ transform:scale(.92); opacity:0; }
+      to{ transform:scale(1); opacity:1; }
+    }
+    .hint{
+      margin:0 0 18px;
+      color:#555;
+      font-size:14px;
+    }
+    .btn{
+      border:0;
+      padding:14px 24px;
+      border-radius:999px;
+      font-size:16px;
+      font-weight:900;
+      cursor:pointer;
+      background: var(--pink);
+      color:#fff;
+      box-shadow: 0 12px 26px rgba(255,59,138,.35);
+    }
+    .btn:active{ transform: translateY(1px); }
+  </style>
+</head>
+<body>
+  <canvas id="c"></canvas>
+
+  <div class="box">
+    <h1>Happy Birthday <span class="name" id="name">NAME</span> 🎂</h1>
+    <p class="small">You mean more to me than words can ever explain 💗</p>
+
+    <div class="big">🎉 It’s Your Birthday! 🎉</div>
+    <p class="hint">💜 Ready for your surprise! 💜<br/>Something magical is about to unfold ✨</p>
+
+    <button class="btn" id="next">Let’s Celebrate</button>
+  </div>
+
+<script>
+  // 🔒 basic lock
+  if(localStorage.getItem("unlocked") !== "yes"){
+    window.location.href = "index.html";
+  }
+
+  const config = { NAME:"Divyanshi" }; // ✅ change
+  document.getElementById("name").textContent = config.NAME;
+
+  // Confetti / poppers canvas
+  const canvas = document.getElementById("c");
+  const ctx = canvas.getContext("2d");
+  function resize(){ canvas.width = innerWidth; canvas.height = innerHeight; }
+  addEventListener("resize", resize); resize();
+
+  let parts = [];
+  function burst(){
+    const cx = innerWidth/2, cy = innerHeight*0.35;
+    for(let i=0;i<220;i++){
+      parts.push({
+        x:cx, y:cy,
+        vx:(Math.random()*8-4),
+        vy:(Math.random()*-10-2),
+        g:0.22 + Math.random()*0.08,
+        r:2 + Math.random()*4,
+        life: 120 + Math.random()*40,
+        c:`hsl(${Math.random()*360},90%,60%)`
+      });
+    }
+  }
+
+  function anim(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    parts.forEach(p=>{
+      p.life--;
+      p.vy += p.g;
+      p.x += p.vx;
+      p.y += p.vy;
+      ctx.fillStyle = p.c;
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fill();
+    });
+    parts = parts.filter(p=> p.life>0 && p.y<canvas.height+30);
+    requestAnimationFrame(anim);
+  }
+  burst(); anim();
+  setTimeout(burst, 700);
+  setTimeout(burst, 1400);
+
+  document.getElementById("next").addEventListener("click", ()=>{
+    window.location.href = "celebrate.html";
+  });
+</script>
+</body>
+</html>
