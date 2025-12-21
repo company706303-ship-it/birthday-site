@@ -128,16 +128,17 @@
 <script>
   /* ================= CONFIG ================= */
   const CONFIG = {
-    DISPLAY_NAME: "Kuku",            // what shows on screen
+    DISPLAY_NAME: "Kuku",
     REAL_NAME: "Sayan",
 
-    // 🎂 Birthday timing (LOCAL TIME)
-    RELEASE_START: "2025-12-23T00:00:00", // midnight
-    RELEASE_END:   "2025-12-23T10:00:00", // deactivate after morning (change if needed)
+    // 🎂 Birthday moment (LOCAL TIME)
+    RELEASE_START: "2025-12-23T00:00:00",
 
     // 🔓 Preview mode for YOU
-    // use: index.html?preview=1&key=kuku
-    PREVIEW_KEY: "kuku"
+    PREVIEW_KEY: "kuku",
+
+    // 🔐 permanent unlock key
+    UNLOCK_KEY: "birthday_unlocked"
   };
 
   /* ============== HELPERS =================== */
@@ -146,18 +147,12 @@
     return p.get("preview") === "1" && p.get("key") === CONFIG.PREVIEW_KEY;
   }
 
+  function isUnlockedForever(){
+    return localStorage.getItem(CONFIG.UNLOCK_KEY) === "yes";
+  }
+
   function beforeRelease(){
     return new Date() < new Date(CONFIG.RELEASE_START);
-  }
-
-  function withinRelease(){
-    const now = new Date();
-    return now >= new Date(CONFIG.RELEASE_START) &&
-           now <  new Date(CONFIG.RELEASE_END);
-  }
-
-  function afterRelease(){
-    return new Date() >= new Date(CONFIG.RELEASE_END);
   }
 
   const pad = (n)=> String(n).padStart(2,"0");
@@ -182,18 +177,30 @@
     if(text) goBtn.textContent = text;
   }
 
+  function showZeroTime(){
+    hh.textContent = "00";
+    mm.textContent = "00";
+    ss.textContent = "00";
+  }
+
   function tick(){
-    // 🧪 PREVIEW MODE — always enabled for editing
+    // 🧪 PREVIEW MODE — always open
     if(isPreviewMode()){
+      showZeroTime();
       setButton(true, "Let’s Celebrate");
       return;
     }
 
-    const now = new Date();
+    // 🔓 ALREADY UNLOCKED — STAY OPEN FOREVER
+    if(isUnlockedForever()){
+      showZeroTime();
+      setButton(true, "Let’s Celebrate 🎉");
+      return;
+    }
 
     // ⏳ BEFORE BIRTHDAY
     if(beforeRelease()){
-      let diff = target - now;
+      let diff = target - new Date();
 
       const h = Math.max(0, Math.floor(diff / (1000*60*60)));
       diff -= h * (1000*60*60);
@@ -209,26 +216,9 @@
       return;
     }
 
-    // 🎉 DURING BIRTHDAY WINDOW
-    if(withinRelease()){
-      hh.textContent = "00";
-      mm.textContent = "00";
-      ss.textContent = "00";
-
-      setButton(true, "Let’s Celebrate 🎉");
-      localStorage.setItem("unlocked", "yes");
-      return;
-    }
-
-    // ⛔ AFTER MORNING CUTOFF
-    if(afterRelease()){
-      hh.textContent = "00";
-      mm.textContent = "00";
-      ss.textContent = "00";
-
-      setButton(false, "Come back later ❤️");
-      return;
-    }
+    // 🎉 BIRTHDAY REACHED (first time)
+    showZeroTime();
+    setButton(true, "Let’s Celebrate 🎉");
   }
 
   setInterval(tick, 1000);
@@ -236,15 +226,16 @@
 
   /* ============== NAVIGATION =================== */
   goBtn.addEventListener("click", ()=>{
+    // preview
     if(isPreviewMode()){
-      localStorage.setItem("unlocked","yes");
+      localStorage.setItem(CONFIG.UNLOCK_KEY, "yes");
       window.location.href = "birthday.html?preview=1&key=" + CONFIG.PREVIEW_KEY;
       return;
     }
 
-    if(withinRelease()){
-      window.location.href = "birthday.html";
-    }
+    // real launch → permanently unlock
+    localStorage.setItem(CONFIG.UNLOCK_KEY, "yes");
+    window.location.href = "birthday.html";
   });
 </script>
 </body>
