@@ -12,6 +12,48 @@
       --text:#111;
     }
     *{box-sizing:border-box}
+    <audio id="bgm" preload="auto" loop>
+  <source src="/birthday-site/Happy Birthday.mp3" type="audio/mpeg">
+</audio>
+    <script>
+  // Background music controller (shared across all pages)
+  (function(){
+    const MUSIC_KEY = "bgm_enabled";
+    const audio = document.getElementById("bgm");
+    if(!audio) return;
+
+    // Restore preference (default ON)
+    const enabled = (localStorage.getItem(MUSIC_KEY) ?? "yes") === "yes";
+
+    function tryPlay(){
+      if(localStorage.getItem(MUSIC_KEY) !== "yes") return;
+      audio.volume = 0.35;
+      audio.play().catch(()=>{ /* autoplay blocked until user clicks */ });
+    }
+
+    // Save ON by default if not set
+    if(localStorage.getItem(MUSIC_KEY) == null) localStorage.setItem(MUSIC_KEY, "yes");
+
+    // Try immediately (may be blocked)
+    if(enabled) tryPlay();
+
+    // Start on the first user interaction (works everywhere)
+    const startOnFirstClick = () => {
+      tryPlay();
+      window.removeEventListener("pointerdown", startOnFirstClick);
+      window.removeEventListener("keydown", startOnFirstClick);
+    };
+    window.addEventListener("pointerdown", startOnFirstClick, { once:false });
+    window.addEventListener("keydown", startOnFirstClick, { once:false });
+
+    // Expose small helpers (for card.html to pause/resume)
+    window.__BGM__ = {
+      pause: () => { try { audio.pause(); } catch(e){} },
+      play:  () => { tryPlay(); },
+      isEnabled: () => localStorage.getItem(MUSIC_KEY) === "yes"
+    };
+  })();
+</script>
     body{
       margin:0;
       min-height:100vh;
